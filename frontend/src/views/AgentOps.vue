@@ -1,0 +1,1 @@
+<template><section class="panel"><div class="panel-title"><h2>Agent 运维</h2><el-tag type="info">DISABLED</el-tag></div><div class="empty"><h3>Agent 运维功能尚未启用</h3><p>未来将支持 MCP tools、诊断、配置 patch、人工审批和审计。</p><p>高风险的停止、重启、命令发送和配置应用必须经过人工审批。</p></div></section></template>

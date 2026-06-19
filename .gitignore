@@ -1,0 +1,13 @@
+backend/data/
+backend/panel
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+.env
+*.db
+*.db-shm
+*.db-wal
+
+# Bedrock runtime is installed separately and contains mutable world data.
+bedrock-server/
+!bedrock-server/.gitkeep

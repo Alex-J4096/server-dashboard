@@ -1,0 +1,8 @@
+<script setup lang="ts">
+import {onMounted,onUnmounted,ref} from 'vue'
+import {ElMessage} from 'element-plus'
+import {api} from '../api/client'
+import type {MetricsSummary} from '../api/types'
+const data=ref<MetricsSummary>();let timer=0;const bytes=(v=0)=>v>1073741824?`${(v/1073741824).toFixed(2)} GB`:`${(v/1048576).toFixed(1)} MB`;async function load(){try{data.value=await api('/api/metrics/summary')}catch(e){ElMessage.error((e as Error).message)}}onMounted(()=>{load();timer=window.setInterval(load,5000)});onUnmounted(()=>clearInterval(timer))
+</script>
+<template><div class="grid grid-4"><div class="metric-card"><small>SYSTEM CPU</small><strong>{{data?.system.cpu_percent.toFixed(1)||'0.0'}}%</strong><em>all cores</em></div><div class="metric-card"><small>SYSTEM MEMORY</small><strong>{{bytes(data?.system.memory_used)}}</strong><em>of {{bytes(data?.system.memory_total)}}</em></div><div class="metric-card"><small>DISK USED</small><strong>{{bytes(data?.system.disk_used)}}</strong><em>of {{bytes(data?.system.disk_total)}}</em></div><div class="metric-card"><small>PROCESS MEMORY</small><strong>{{bytes(data?.process.memory_bytes)}}</strong><em>bedrock_server</em></div></div><div class="grid grid-2" style="margin-top:16px"><div class="metric-card"><small>NETWORK RECEIVED</small><strong>{{bytes(data?.network.rx_bytes_total)}}</strong><em>since system boot</em></div><div class="metric-card"><small>NETWORK SENT</small><strong>{{bytes(data?.network.tx_bytes_total)}}</strong><em>since system boot</em></div></div><section class="panel" style="margin-top:16px"><div class="panel-title"><h2>Prometheus 接入</h2></div><p class="muted">Prometheus 格式指标已开放于 <code>/metrics</code>，默认部署配置每 15 秒抓取一次。</p></section></template>

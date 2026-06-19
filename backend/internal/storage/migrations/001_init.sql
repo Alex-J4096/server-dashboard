@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS servers (id TEXT PRIMARY KEY, name TEXT NOT NULL, root_dir TEXT NOT NULL, executable_path TEXT NOT NULL, working_dir TEXT NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);
+CREATE TABLE IF NOT EXISTS server_runs (id INTEGER PRIMARY KEY AUTOINCREMENT, server_id TEXT NOT NULL, pid INTEGER, state TEXT NOT NULL, started_at DATETIME, stopped_at DATETIME, exit_code INTEGER, error_message TEXT, created_at DATETIME NOT NULL);
+CREATE TABLE IF NOT EXISTS log_entries (id INTEGER PRIMARY KEY AUTOINCREMENT, server_id TEXT NOT NULL, run_id INTEGER, level TEXT NOT NULL, source TEXT NOT NULL, message TEXT NOT NULL, created_at DATETIME NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_log_entries_server_created ON log_entries(server_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_log_entries_message ON log_entries(message);
+CREATE TABLE IF NOT EXISTS command_entries (id INTEGER PRIMARY KEY AUTOINCREMENT, server_id TEXT NOT NULL, run_id INTEGER, command TEXT NOT NULL, source TEXT NOT NULL, user_id TEXT, success BOOLEAN NOT NULL, error_message TEXT, created_at DATETIME NOT NULL);
+CREATE TABLE IF NOT EXISTS config_snapshots (id INTEGER PRIMARY KEY AUTOINCREMENT, server_id TEXT NOT NULL, file_path TEXT NOT NULL, content TEXT NOT NULL, content_hash TEXT NOT NULL, created_by TEXT, reason TEXT, created_at DATETIME NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_config_snapshots_file ON config_snapshots(server_id, file_path, created_at);
+CREATE TABLE IF NOT EXISTS audit_events (id INTEGER PRIMARY KEY AUTOINCREMENT, actor_type TEXT NOT NULL, actor_id TEXT, action TEXT NOT NULL, target TEXT, detail TEXT, created_at DATETIME NOT NULL);
+CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE COLLATE NOCASE, password_hash TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin','operator','viewer')), disabled BOOLEAN NOT NULL DEFAULT FALSE, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);
+CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires_at DATETIME NOT NULL, created_at DATETIME NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);

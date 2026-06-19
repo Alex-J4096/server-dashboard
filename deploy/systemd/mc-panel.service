@@ -1,0 +1,19 @@
+[Unit]
+Description=Minecraft Bedrock Server Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=minecraft
+Group=minecraft
+WorkingDirectory=/opt/mc-panel/backend
+EnvironmentFile=/opt/mc-panel/backend/config/app.env
+ExecStart=/opt/mc-panel/backend/panel
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/mc-panel/backend/data /opt/minecraft/bedrock
+
+[Install]
+WantedBy=multi-user.target
